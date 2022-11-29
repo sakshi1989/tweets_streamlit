@@ -101,7 +101,7 @@ with tab1:
 
     # Create the chart for the total posts based on days
     create_count_charts('weekday', "Day's")
-    # Create the chart for the total posts based on th hour of the day
+    # Create the chart for the total posts based on the hour of the day
     create_count_charts('hour', "Hour")        
 
     st.markdown("#")
@@ -115,8 +115,11 @@ with tab1:
     top_2_dates = day_tweets.sort_values(by=['count'],ascending=False).head(2).reset_index(drop=True)
     date1 = top_2_dates.loc[0,'date']
     date1 = datetime.strftime(date1 , '%b %d, %Y')
+    count1 = top_2_dates.loc[0,'count']
+
     date2 = top_2_dates.loc[1,'date']
     date2 = datetime.strftime(date2 , '%b %d, %Y')
+    count2 = top_2_dates.loc[1,'count']
     
     
     daily_line_chart = alt.Chart(day_tweets, title = "Daily Frequency of Elon Musk Tweets").mark_line(color='green')\
@@ -126,22 +129,36 @@ with tab1:
                                 tooltip = alt.Tooltip(['date','count']) 
                                 )
     text = daily_line_chart.mark_text(align='center',baseline = 'middle', dx=5, dy=-4).encode(
-                            text = alt.condition(alt.datum.count == 30 , alt.value(date1) , alt.value(""))
+                            text = alt.condition(alt.datum.count == count1 , alt.value(date1) , alt.value(""))
                         )   
     text1 = daily_line_chart.mark_text(align='center',baseline = 'middle', dx=5, dy=-4).encode(
-                            text = alt.condition(alt.datum.count == 29 , alt.value(date2) , alt.value(""))
+                            text = alt.condition(alt.datum.count == count2 , alt.value(date2) , alt.value(""))
                         )                                                     
 
     st.altair_chart(alt.layer(daily_line_chart,text,text1), use_container_width=True)
 
 with tab2:
 
+    def humanize_interval(input):
+        num = input.right.item()
+        if num < 1000000:
+            return '{:.1f}K'.format(num / 1000)
+        elif num < 1000000000:
+            return '{:.1f}M'.format(num / 1000000)
+        else:
+            return '{:.1f}B'.format(num / 1000000000)
+
     # graph about number of tweets liked by the followers (binning done on the number of likes)
-    likes_tweets = data.groupby('likes')['tweets'].size().reset_index(name='count')
-    hist_chart = alt.Chart(likes_tweets).mark_bar().encode(
-                                                            alt.X("likes:O", bin=alt.Bin(maxbins=100,
-                                                                    anchor= data.likes.min()),
-                                                                    title = 'Bins of the Likes'
+    bins = range(0, data['likes'].max() + 1000, 100000)
+
+    likes_tweets = data.groupby(pd.cut(data['likes'], bins=bins))['tweets'].size().reset_index(name='count')
+    likes_tweets['likes'] = likes_tweets['likes'].apply(humanize_interval)
+    
+    hist_chart = alt.Chart(likes_tweets).mark_area().encode(
+                                                            alt.X("likes:O",
+                                                            sort=None,
+
+                                                                    title = 'Likes'
                                                                 ),
                                                             alt.Y('count', title = 'Number of tweets lying in bin'),
                                                             alt.Tooltip(['likes','count'])
@@ -150,40 +167,13 @@ with tab2:
                                                     
 
     # graph about number of tweets retweeted by the followers (binning done on the number of retweets)
-    retweets_tweets = data.groupby('retweets')['tweets'].size().reset_index(name='count')
-    hist_chart1 = alt.Chart(retweets_tweets, title = 'Number of retweets on Elon Musk tweets').mark_bar().encode(
-                                                            alt.X("retweets:O", bin=alt.Bin(maxbins=100,
-                                                                    anchor= data.retweets.min()),
+    retweets_tweets = data.groupby(pd.cut(data['retweets'], bins=bins))['tweets'].size().reset_index(name='count')
+    retweets_tweets['retweets'] = retweets_tweets['retweets'].apply(humanize_interval)
+    hist_chart1 = alt.Chart(retweets_tweets, title = 'Number of retweets on Elon Musk tweets').mark_area().encode(
+                                                            alt.X("retweets:O", sort=None,
                                                                     title = 'Bins of the Retweets'
                                                                 ),
                                                             alt.Y('count', title = 'Retweets Count'),
                                                             alt.Tooltip(['retweets','count'])
                                                         )
     st.altair_chart(hist_chart1, use_container_width=True)
-
-
-# listTabs = [
-#     "A tab",
-#     "🦈",
-#     "More tabs",
-#     "A long loooooong tab",
-#     "🎨",
-#     "x²"
-# ]
-
-# st.header("Tab alignment")
-# st.subheader("No fill:")
-# tabs = st.tabs(listTabs)
-
-# st.markdown("----")
-
-# whitespace = 9
-# st.markdown("#### 💡 Center fill with whitespace (em-space):")
-# ## Fills and centers each tab label with em-spaces
-# tabs = st.tabs([s.center(whitespace,"\u2001") for s in listTabs])
-
-# st.markdown("#### 🤔 Center fill with visible character")
-# tabs = st.tabs([s.center(whitespace,"-") for s in listTabs])
-
-# st.markdown("#### ❌ Regular spaces are stripped down by streamlit")
-# tabs = st.tabs([s.center(whitespace," ") for s in listTabs])

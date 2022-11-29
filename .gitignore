@@ -10,3 +10,5 @@ draft_version/
 GoogleNews-vectors-negative300.bin.gz
 rand1.csv
 GoogleNews-vectors-negative300.bin
+verbs_data.csv
+sankey_diag.ipynb
