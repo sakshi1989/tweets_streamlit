@@ -57,8 +57,8 @@ with tab1:
     word_could_dict = Counter(keyphrases)
 
     cloud = WordCloud(background_color="white",
-                      width=1000,
-                      height=800,
+                      width=800,
+                      height=500,
                       random_state=42)
     wc = cloud.generate_from_frequencies(word_could_dict)
 
@@ -68,7 +68,7 @@ with tab1:
                                 </u></i></b></div>', unsafe_allow_html=True)
     st.markdown('##')
 
-    center_image(wc.to_array())
+    st.image(wc.to_array())
 
     st.markdown('#')
     st.markdown('#')
@@ -105,10 +105,10 @@ with tab1:
         ).properties(width=500)
 
         if groupby_var == 'weekday':
-            col1.altair_chart(bar_chart, use_container_width=True)
+            col1.altair_chart(bar_chart, use_container_width=False)
         else:
             line = base.mark_line(color='red').encode(y='count')
-            col2.altair_chart((bar_chart + line), use_container_width=True)
+            col2.altair_chart((bar_chart + line), use_container_width=False)
 
     col1, col2 = st.columns(2)
 
@@ -137,17 +137,17 @@ with tab1:
     date2 = datetime.strftime(date2, '%b %d, %Y')
     count2 = top_2_dates.loc[1, 'count']
 
-    daily_line_chart = alt.Chart(day_tweets, title="Daily Frequency of Elon Musk Tweets").mark_line(color='green')\
+    daily_line_chart = alt.Chart(day_tweets, title=["Daily Frequency of Elon Musk Tweets",""]).mark_line(color='green')\
         .encode(alt.X('date',
                       title='Date'),
                 alt.Y('count', title='Total Tweets Posted'),
                 tooltip=alt.Tooltip(['date', 'count'])
                 )
-    text = daily_line_chart.mark_text(align='center', baseline='middle', dx=5, dy=-4).encode(
+    text = daily_line_chart.mark_text(align='center', baseline='middle', dx=5, dy=-4, color='#000').encode(
         text=alt.condition(alt.datum.count == count1,
                            alt.value(date1), alt.value(""))
     )
-    text1 = daily_line_chart.mark_text(align='center', baseline='middle', dx=5, dy=-4).encode(
+    text1 = daily_line_chart.mark_text(align='center', baseline='middle', dx=5, dy=-4, color='#000').encode(
         text=alt.condition(alt.datum.count == count2,
                            alt.value(date2), alt.value(""))
     )
@@ -173,13 +173,12 @@ with tab2:
         'tweets'].size().reset_index(name='count')
     likes_tweets['likes'] = likes_tweets['likes'].apply(humanize_interval)
 
-    hist_chart = alt.Chart(likes_tweets).mark_area().encode(
+    hist_chart = alt.Chart(likes_tweets, title='Distribution of Tweets with respect to Likes').mark_area().encode(
         alt.X("likes:O",
               sort=None,
-
-              title='Likes'
+              title='Likes (Bins)'
               ),
-        alt.Y('count', title='Number of tweets lying in bin'),
+        alt.Y('count', title='No. of Tweets'),
         alt.Tooltip(['likes', 'count'])
     )
     st.altair_chart(hist_chart, use_container_width=True)
@@ -189,11 +188,11 @@ with tab2:
         'tweets'].size().reset_index(name='count')
     retweets_tweets['retweets'] = retweets_tweets['retweets'].apply(
         humanize_interval)
-    hist_chart1 = alt.Chart(retweets_tweets, title='Number of retweets on Elon Musk tweets').mark_area().encode(
+    hist_chart1 = alt.Chart(retweets_tweets, title='Distribution of Tweets with respect to Retweets').mark_area().encode(
         alt.X("retweets:O", sort=None,
-              title='Bins of the Retweets'
+              title='Retweets (Bins)'
               ),
-        alt.Y('count', title='Retweets Count'),
+        alt.Y('count', title='No. of Tweets'),
         alt.Tooltip(['retweets', 'count'])
     )
     st.altair_chart(hist_chart1, use_container_width=True)
