@@ -109,7 +109,7 @@ filter_mask = df_date_filtered.apply(filter_records, axis=1)
 df_filtered = df_date_filtered[filter_mask].copy()
 df_filtered.reset_index(drop=True, inplace=True)
 
-st.write(df_filtered)
+# st.write(df_filtered)
 
 # Overall emotion calculation
 # Create the dictionary with key as the emotions and initialize the value with 0
