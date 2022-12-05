@@ -12,3 +12,6 @@ rand1.csv
 GoogleNews-vectors-negative300.bin
 verbs_data.csv
 sankey_diag.ipynb
+data/after_clean.csv
+data/processed_data1.parquet
+elonmusk_tweets/__pycache__/

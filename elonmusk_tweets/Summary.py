@@ -5,39 +5,33 @@ from wordcloud import WordCloud
 import altair as alt
 from datetime import datetime
 from PIL import Image
-
-def center_image(image, n_cols=3):
-    cols = st.columns(n_cols)
-    cols[len(cols) // 2].image(image)
+from util import load_data
 
 # Layout of the page
 st.set_page_config(layout="wide")
 
-center_image(Image.open('emotion-images/joy.png'), 5)
+# Read the dataframe
+if 'dataframe' in st.session_state:
+    data = st.session_state['dataframe']
+else:
+    data = load_data()
+    # Add the dataframe into the session to access it in the "Detailed" page
+    st.session_state['dataframe'] = data
+
+
+emotion_image = Image.open('images/main_page_image.png')
+st.columns(5)[2].image(emotion_image)
 
 # Heading of the page
-st.markdown("<h2 style='text-align: center; color: #000000;'>Elon Musk Tweets Overall Information</h2>",
+st.markdown("<h2 style='text-align: center; color: #984ea3;'>Elon Musk Tweets Overall Information</h2>",
             unsafe_allow_html=True)
-
-
-@st.cache(allow_output_mutation=True)
-def load_data():
-    data = pd.read_parquet('./data/processed_data.parquet')
-    def lowercase(x): return str(x).lower()
-    data.rename(lowercase, axis='columns', inplace=True)
-    # Add the names of the weekday
-    data['weekday'] = data.date.dt.day_name()
-    # Convert the UTC timezone in EST and extract the hour part from it
-    data['hour'] = data.date.dt.tz_localize(
-        'UTC').dt.tz_convert('US/Eastern').dt.hour
-    return data
-
 
 data = load_data()
 
 # Add the dataframe into the session to access it in the "Detailed" page
 if 'dataframe' not in st.session_state:
     st.session_state['dataframe'] = data
+
 
 # Add the space between the heading and the tabs
 st.markdown('#')
@@ -47,7 +41,7 @@ tab1, tab2 = st.tabs([s.center(whitespace, "\u2001")
                      for s in ['Posts', 'Posts Engagement']])
 
 with tab1:
-
+#-------------------------------------- Word Cloud on Elon Musk Topics ------------------------------------
     # Get all the Noun Keyphrases in the list
     keyphrases = data['noun_keyphrases']
     # explode the data into list and remove entries whose noun keyphrases were not available
@@ -64,26 +58,30 @@ with tab1:
 
     st.markdown('#')
 
-    st.markdown('<div style="text-align: center; color : #000000;"><b><i><u>What Elon Musk has been talking about in his tweets? \
+    st.markdown('<div style="text-align: center; font-size:20px; color : #000000;">\
+                <b><i><u>What Elon Musk has been talking about in his tweets? \
                                 </u></i></b></div>', unsafe_allow_html=True)
     st.markdown('##')
 
-    st.image(wc.to_array())
+    col1, col2, col3 = st.columns([1, 6, 1])
+    col2.image(wc.to_array())
 
     st.markdown('#')
     st.markdown('#')
-
-    st.markdown('<div style="text-align: center; color : #000000;"><b><i><u>Elon Musk total tweets bifurcation based \
-                                on days and the hour of day</u></i></b></div>', unsafe_allow_html=True)
-    st.markdown('##')
-
+#---------------------------------- Elon Musk Tweets bifurcation based on days and hour of the day------------------------------
+    
+    st.markdown('<div style="text-align: center;font-size:20px; color : #000000;">\
+                    <b><i><u>Elon Musk total tweets bifurcation based \
+                    on days and the hour of day</u></i></b></div>', unsafe_allow_html=True)
+    st.markdown('#')
+    
     # Define the function to create the day-wise and hour-wise graphs
     def create_count_charts(groupby_var, main_title_word):
         chart_data = data.groupby(groupby_var)[
             'tweets'].size().reset_index(name='count')
 
-        main_chart_title = main_title_word + ' on which Elon Musk post most tweets'
-        x_title = main_title_word + ' of the Week'
+        main_chart_title = f'{main_title_word} on which Elon Musk post most tweets'
+        x_title = f'{main_title_word} of the Week'
         col = groupby_var + ':O'
         if groupby_var == 'weekday':
             sort = ['Monday', 'Tuesday', 'Wednesday',
@@ -93,7 +91,7 @@ with tab1:
             sort = 'ascending'
             color = 'orange'
 
-        base = alt.Chart(chart_data, title=main_chart_title)\
+        base = alt.Chart(chart_data, title=[main_chart_title, " "])\
             .encode(alt.X(col,
                           sort=sort,
                           title=x_title))
@@ -104,19 +102,21 @@ with tab1:
             tooltip=alt.Tooltip('count')
         ).properties(width=500)
 
-        if groupby_var == 'weekday':
+
+        if groupby_var == 'weekday':            
             col1.altair_chart(bar_chart, use_container_width=False)
         else:
-            line = base.mark_line(color='red').encode(y='count')
+            line = base.mark_line(color='red').encode(y='count')            
             col2.altair_chart((bar_chart + line), use_container_width=False)
 
     col1, col2 = st.columns(2)
 
     # Create the chart for the total posts based on days
-    create_count_charts('weekday', "Day's")
+    create_count_charts('weekday', f"Day's 📅")
     # Create the chart for the total posts based on the hour of the day
-    create_count_charts('hour', "Hour")
+    create_count_charts('hour', f"Hour ⏰")
 
+#------------------------------------- Daily Frequency Tweets Chart -------------------------------------------------------
     st.markdown("#")
     # graph about tweets posted per day. Instead of adding date part column in dataframe, the
     # value is calculated in the groupby function itself
@@ -137,7 +137,7 @@ with tab1:
     date2 = datetime.strftime(date2, '%b %d, %Y')
     count2 = top_2_dates.loc[1, 'count']
 
-    daily_line_chart = alt.Chart(day_tweets, title=["Daily Frequency of Elon Musk Tweets",""]).mark_line(color='green')\
+    daily_line_chart = alt.Chart(day_tweets, title=["Daily Frequency of Elon Musk Tweets", " "," "]).mark_line(color='green')\
         .encode(alt.X('date',
                       title='Date'),
                 alt.Y('count', title='Total Tweets Posted'),
@@ -166,33 +166,48 @@ with tab2:
         else:
             return '{:.1f}B'.format(num / 1000000000)
 
-    # graph about number of tweets liked by the followers (binning done on the number of likes)
-    bins = range(0, data['likes'].max() + 1000, 100000)
+# ------------ graph about number of tweets liked by the followers (binning done on the number of likes)---------------------------
+    # Define the size of the bin
+    like_binsize = (data['likes'].max() + 1000) // 20
+    # create the bins
+    like_bins = range(0, data['likes'].max() + 1000, like_binsize)
 
-    likes_tweets = data.groupby(pd.cut(data['likes'], bins=bins))[
+    # segment the data based on the bins created
+    likes_tweets = data.groupby(pd.cut(data['likes'], bins=like_bins))[
         'tweets'].size().reset_index(name='count')
+    # convert the likes value into more readable format
     likes_tweets['likes'] = likes_tweets['likes'].apply(humanize_interval)
 
-    hist_chart = alt.Chart(likes_tweets, title='Distribution of Tweets with respect to Likes').mark_area().encode(
-        alt.X("likes:O",
-              sort=None,
-              title='Likes (Bins)'
-              ),
-        alt.Y('count', title='No. of Tweets'),
-        alt.Tooltip(['likes', 'count'])
-    )
-    st.altair_chart(hist_chart, use_container_width=True)
+    # Create Area Chart
+    area_chart_likes = alt.Chart(likes_tweets, title=['Distribution of Tweets with respect to Likes', " "]).mark_area(color='#beaed4')\
+        .encode(
+                    alt.X("likes:O",
+                        sort=None,
+                        title='Likes (Bins)'
+                        ),
+                    alt.Y('count', title='No. of Tweets'),
+                    alt.Tooltip(['likes', 'count'])
+                )
+    st.altair_chart(area_chart_likes, use_container_width=True)
 
-    # graph about number of tweets retweeted by the followers (binning done on the number of retweets)
-    retweets_tweets = data.groupby(pd.cut(data['retweets'], bins=bins))[
+#------------- graph about number of tweets retweeted by the followers (binning done on the number of retweets)-------------------
+    retweet_binsize = (data['retweets'].max() + 1000) // 20
+    # create the bins
+    retweets_bins = range(0, data['retweets'].max() + 1000, retweet_binsize)
+
+    # segment the data based on the bins created
+    retweets_tweets = data.groupby(pd.cut(data['retweets'], bins=retweets_bins))[
         'tweets'].size().reset_index(name='count')
+    # convert the retweets value into more readable format
     retweets_tweets['retweets'] = retweets_tweets['retweets'].apply(
         humanize_interval)
-    hist_chart1 = alt.Chart(retweets_tweets, title='Distribution of Tweets with respect to Retweets').mark_area().encode(
-        alt.X("retweets:O", sort=None,
-              title='Retweets (Bins)'
-              ),
-        alt.Y('count', title='No. of Tweets'),
-        alt.Tooltip(['retweets', 'count'])
-    )
-    st.altair_chart(hist_chart1, use_container_width=True)
+    # create the area chart
+    area_chart_retweets = alt.Chart(retweets_tweets, title=['Distribution of Tweets with respect to Retweets'," "]).mark_area(color='#9467bd')\
+        .encode(
+                    alt.X("retweets:O", sort=None,
+                        title='Retweets (Bins)'
+                        ),
+                    alt.Y('count', title='No. of Tweets'),
+                    alt.Tooltip(['retweets', 'count'])
+                )
+    st.altair_chart(area_chart_retweets, use_container_width=True)
