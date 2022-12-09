@@ -16,6 +16,7 @@ sentence-transformers==2.2.2
 sentencepiece==0.1.95
 spacy==3.4.3
 streamlit==1.15.2
+streamlit-extras==0.2.4
 tokenizers==0.12.1
 transformers==4.21.3
 wordcloud==1.8.2.2
