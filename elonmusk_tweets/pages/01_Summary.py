@@ -8,7 +8,7 @@ from PIL import Image
 from util import load_data
 
 # Layout of the page
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide",)
 
 # Read the dataframe
 if 'dataframe' in st.session_state:
@@ -126,34 +126,30 @@ with tab1:
     # Altair parse the date in UTC which was making the dates to be displayed in altair as date - 1
     day_tweets['date'] = pd.to_datetime(
         day_tweets['date']).dt.tz_localize('US/Eastern')
-
-    top_2_dates = day_tweets.sort_values(
-        by=['count'], ascending=False).head(2).reset_index(drop=True)
-    date1 = top_2_dates.loc[0, 'date']
-    date1 = datetime.strftime(date1, '%b %d, %Y')
-    count1 = top_2_dates.loc[0, 'count']
-
-    date2 = top_2_dates.loc[1, 'date']
-    date2 = datetime.strftime(date2, '%b %d, %Y')
-    count2 = top_2_dates.loc[1, 'count']
-
-    daily_line_chart = alt.Chart(day_tweets, title=["Daily Frequency of Elon Musk Tweets", " "," "]).mark_line(color='green')\
+    # Create a filter based on when elon musk post most tweets
+    max_count = day_tweets['count'].max()
+    day_tweets['annotate'] = day_tweets['count'].apply(lambda x: x == max_count)
+    # create column in a format in which to annotate peak values
+    day_tweets['date_formatted'] = day_tweets['date'].dt.strftime('%b %d, %Y')  
+    
+    daily_line_chart = alt.Chart(day_tweets, title=["Daily Frequency of Elon Musk Tweets", " "," "]) \
+        .mark_line(color='green')\
         .encode(alt.X('date',
+                      axis = alt.Axis(labelAngle=45,tickCount={"interval": "week", "step": 1}),
                       title='Date'),
                 alt.Y('count', title='Total Tweets Posted'),
                 tooltip=alt.Tooltip(['date', 'count'])
                 )
-    text = daily_line_chart.mark_text(align='center', baseline='middle', dx=5, dy=-4, color='#000').encode(
-        text=alt.condition(alt.datum.count == count1,
-                           alt.value(date1), alt.value(""))
-    )
-    text1 = daily_line_chart.mark_text(align='center', baseline='middle', dx=5, dy=-4, color='#000').encode(
-        text=alt.condition(alt.datum.count == count2,
-                           alt.value(date2), alt.value(""))
-    )
+        
 
-    st.altair_chart(alt.layer(daily_line_chart, text, text1),
+    text = daily_line_chart.mark_text(align='center', baseline='middle', dx=5, dy=-4, color='#000').encode(
+        text=alt.condition(alt.datum.annotate,
+                           'date_formatted', alt.value("")) 
+    )
+  
+    st.altair_chart(alt.layer(daily_line_chart, text),
                     use_container_width=True)
+   
 
 with tab2:
 

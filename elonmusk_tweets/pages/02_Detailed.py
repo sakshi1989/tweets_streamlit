@@ -103,7 +103,6 @@ def filter_records(record):
 
     return result
 
-
 # apply the filter mask
 filter_mask = df_date_filtered.apply(filter_records, axis=1)
 df_filtered = df_date_filtered[filter_mask].copy()
@@ -148,8 +147,7 @@ with tab1:
     col2.metric(label = "**Total Retweets :repeat:**", value = millify(df_filtered['retweets'].sum()))
     col3.metric(label = "**Count of Tweets :1234:**", value =  str(df_filtered.shape[0]))
 
-    st.markdown("#")
-    # st.markdown("#")
+    st.markdown("#") 
 
 #-------------------------------------- Word Cloud on Filtered Data ---------------------------------------------------------
     if select_emotions == 'All' and select_topics == 'All':
@@ -168,22 +166,6 @@ with tab1:
                                                 
         
     st.markdown("#")
-
-    # stopwords = set(STOPWORDS)
-    # stopwords.update(['us', 'one', 'will', 'said', 'now', 'well', 'man', 'may',
-    #                 'little', 'say', 'must', 'way', 'long', 'yet', 'mean',
-    #                 'put', 'seem', 'asked', 'made', 'half', 'much',
-    #                 'certainly', 'might', 'came', 'true', 'ago', 'really',
-    #                 'rather', 'using', 'many', 'sure', 'lot', 'vs', 'run',
-    #                 'top', 'wait', 'every', 'everything', 'whoever','yes','lmk','gets','9s','60b',
-    #                 'let','want','anyone','come','making','done','soon','twice','bs','go','gave','make','etc'])
-    # cloud = WordCloud(background_color="white",
-    #                 width=800,
-    #                 height=500,
-    #                 stopwords=stopwords,
-    #                 random_state=42)
-    # wc = cloud.generate(' '.join(df_filtered['cleaned_tweets'].str.lower().to_list()))
-    # mask = np.array(Image.open("images/wordcloud_twitter.png"))
     wc = util.create_wordcloud(df_filtered, 800, 500)
 
     col1, col2, col3 = st.columns([1, 6, 1])
@@ -196,7 +178,7 @@ with tab1:
         'tweets'].size().reset_index(name='count')
     # Altair parse the date in UTC which was making the dates to be displayed in altair as date - 1
     day_tweets['date'] = pd.to_datetime(day_tweets['date']).dt.tz_localize('US/Eastern')
-
+    
     # If the dataframe has data for greater than 30 days show line chart, else show bar chart
     # line chart else show bar chart
     if len(set(day_tweets.date)) > 30:
@@ -301,7 +283,7 @@ with tab2:
         wc = most_popular_tweets(df_filtered, i) 
         if wc is not None:
             st.markdown(f'<div style="text-align: center; font-size:20px; color : #000000;">\
-                    <b><i><u>Most popular Tweets based on {str.capitalize(i)} \
+                    <b><i><u>Tweets with extra-ordinary engagement based on {str.capitalize(i)} \
                                     </u></i></b></div>', unsafe_allow_html=True)
             st.markdown("#")                                       
             col1, col2, col3 = st.columns([1, 6, 1])
@@ -345,7 +327,7 @@ with tab3:
             scheme='blues',
             type='linear'
         )
-        bar_chart = alt.Chart(df_freq , title = "Bar Chart for " + select_topics + " adjectives").mark_bar().encode(                
+        bar_chart = alt.Chart(df_freq , title = "Bar Chart for '" + select_topics + "' adjectives").mark_bar().encode(                
                                                     alt.X('Word_Count', title='Frequencies', axis = alt.Axis(labels=False)),
                                                     alt.Y('Words', sort = alt.EncodingSortField(field="Word_Count", op="min", order="descending"), title='Adjectives'),
                                                     # text = 'Word_Count',
@@ -394,7 +376,7 @@ with tab4:
             scheme='blues',
             type='linear'
         )
-        bar_chart = alt.Chart(df_freq , title = "Bar Chart for " + select_topics + " verbs").mark_bar().encode(                
+        bar_chart = alt.Chart(df_freq , title = "Bar Chart for '" + select_topics + "' verbs").mark_bar().encode(                
                                                     alt.X('Word_Count', title='Frequencies', axis = alt.Axis(labels=False)),
                                                     alt.Y('Words', sort = alt.EncodingSortField(field="Word_Count", op="min", order="descending"), title='Verbs'),
                                                     # text = 'Word_Count',

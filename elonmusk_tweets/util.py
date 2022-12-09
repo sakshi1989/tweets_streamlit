@@ -20,8 +20,8 @@ def create_wordcloud(data, width, height, mask = None):
     stopwords.update(['us', 'one', 'will', 'said', 'now', 'well', 'man', 'may',
                     'little', 'say', 'must', 'way', 'long', 'yet', 'mean','less',
                     'put', 'seem', 'asked', 'made', 'half', 'much','people','even',
-                    'certainly', 'might', 'came', 'true', 'ago', 'really','think',
-                    'rather', 'using', 'many', 'sure', 'lot', 'vs', 'run','something'
+                    'certainly', 'might', 'came', 'true', 'ago', 'really','think','thing',
+                    'rather', 'using', 'many', 'sure', 'lot', 'vs', 'run','something',
                     'top', 'wait', 'every', 'everything', 'whoever','yes','lmk','gets','9s','60b',
                     'let','want','anyone','come','making','done','soon','twice','bs','go','gave','make','etc'])
     cloud = WordCloud(background_color="white",
