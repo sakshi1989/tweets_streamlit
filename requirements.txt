@@ -1,26 +1,21 @@
 altair==4.2.0
-deep-translator==1.9.1
 emoji==2.2.0
-en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.4.1/en_core_web_sm-3.4.1-py3-none-any.whl
-flair==0.11.3
 gensim==4.2.0
-huggingface-hub==0.11.1
+google-cloud-translate==2.0.1
+ipykernel==6.17.1
 keybert==0.7.0
 keyphrase-vectorizers==0.0.10
 language-tool-python==2.7.1
 matplotlib==3.6.2
-matplotlib-inline==0.1.6
 millify==0.1.1
 nltk==3.7
 numpy==1.23.5
 pandas==1.5.2
-# pycontractions==2.0.2
-git+https://github.com/sakshi1989/pycontractions
-scikit-learn==1.1.3
-scipy==1.9.3
+pyarrow==10.0.1
+sentence-transformers==2.2.2
+sentencepiece==0.1.95
+spacy==3.4.3
 streamlit==1.15.2
 tokenizers==0.12.1
-torch==1.13.0
-torchvision==0.14.0
 transformers==4.21.3
 wordcloud==1.8.2.2
