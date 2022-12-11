@@ -12,6 +12,7 @@ nltk==3.7
 numpy==1.23.5
 pandas==1.5.2
 pyarrow==10.0.1
+git+https://github.com/sakshi1989/pycontractions
 sentence-transformers==2.2.2
 sentencepiece==0.1.95
 spacy==3.4.3
