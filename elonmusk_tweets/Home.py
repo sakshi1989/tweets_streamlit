@@ -30,9 +30,7 @@ div.stButton > button:first-child {
 
 main_page_1 = st.columns(3)[1].button("Take me to the Exciting Stuff!!!")
 
-# main_page_1 = st.button("Take me to the Exciting Stuff!!!")
-
-with open('README.md', 'r') as f:
+with open('Home.md', 'r') as f:
     content = f.read()
     content = content.replace('./images/gcloud-service-key.png', image_encoded('images/gcloud-service-key.png'))
     st.markdown(content, unsafe_allow_html=True)

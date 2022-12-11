@@ -108,8 +108,6 @@ filter_mask = df_date_filtered.apply(filter_records, axis=1)
 df_filtered = df_date_filtered[filter_mask].copy()
 df_filtered.reset_index(drop=True, inplace=True)
 
-# st.write(df_filtered)
-
 # Overall emotion calculation
 # Create the dictionary with key as the emotions and initialize the value with 0
 total_emotion_scores = {x['label']: 0 for x in df_filtered.loc[0,'emotion_scores']}
@@ -343,6 +341,7 @@ with tab3:
                             )                                  
         st.altair_chart(bar_chart + text, use_container_width=True)
     else:
+        # Error Handling
         st.error("Please select the topic of your interest to see it's adjectives", icon="🚨")
 
 with tab4:
@@ -378,8 +377,7 @@ with tab4:
         )
         bar_chart = alt.Chart(df_freq , title = "Bar Chart for '" + select_topics + "' verbs").mark_bar().encode(                
                                                     alt.X('Word_Count', title='Frequencies', axis = alt.Axis(labels=False)),
-                                                    alt.Y('Words', sort = alt.EncodingSortField(field="Word_Count", op="min", order="descending"), title='Verbs'),
-                                                    # text = 'Word_Count',
+                                                    alt.Y('Words', sort = alt.EncodingSortField(field="Word_Count", op="min", order="descending"), title='Verbs'),                                                  
                                                     color=alt.Color('Word_Count', scale=scale)
                                                                 
                                                 ) 
@@ -392,4 +390,5 @@ with tab4:
                             )                                  
         st.altair_chart(bar_chart + text, use_container_width=True)
     else:
+        # Error Handling
         st.error("Please select the topic of your interest to see it's verbs", icon="🚨")

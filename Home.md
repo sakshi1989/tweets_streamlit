@@ -1,11 +1,5 @@
-<b>To view the Streamlit application and have fun, [Click Here!!](https://sakshi1989-elonmusk-tweets-nlp.streamlit.app/)</b>
-
-<hr>
-
 ### _**Introduction**_
-This project's intention was to analyze the world's richest man, Elon Musk (at the time of writing he was at the top position - [Forbe's Real Time Billionaires List](https://www.forbes.com/real-time-billionaires/#6589f38a3d78)) opinions about various topics, and how people react to it. 
-
-For this purpose data was picked from **[Kaggle](https://www.kaggle.com/code/rajkumarpandey02/elon-musk-s-tweets-sentiment-analysis/data?select=cleandata.csv)** which contains tweets fron Jan-2022 to Oct-2022.
+This project is aimed to analyze and visualize Elon Musk tweets from Jan 2022 to Oct 2022. The data used for this analysis is picked from **[Kaggle](https://www.kaggle.com/code/rajkumarpandey02/elon-musk-s-tweets-sentiment-analysis/data?select=cleandata.csv)**.
 
 ### _**Preparation**_
 The following operations were performed on the data to prepare for the visualization.
@@ -70,17 +64,3 @@ Finally the file was saved in the parquet file to be used by the streamlit appli
 # Google client object
 client = translate.Client()
 ```
-<hr>
-<h3><i><b>Reproducing the Report</b></i></h3>
-To run the Streamlit app locally instead of just using the link perform the folowing steps:-
-<ol>
-<li>Download all the folder and notebook - 
-    <ol type="i">
-    <li><i> '.streamlit' --> contains streamlit configuration file to change the aesthetics of the application  </i></li>
-    <li><i>'data' --> holds the initial data and the data after the processing based on the steps mentioned above</i></li>
-    <li><i>'images' --> holds all the images of elon musk emotions and twitter shape to hold the tweets. This also contains the video clip for the main page of the application.</i></li>
-    <li><i>'elonmusk_tweets' --> This is the main Streamlit application package. It contains "util.py" that has two functions - a. load the data b. wordcloud creation. "Home.py" is the landing page of the application. The other two pages "Summary" and "Detailed" is in the pages folder.</i></li>
-    <li><i>'elonmusk.ipynb' --> notebook for the preparation of the data. </i></li>
-    </ol>
-</li>
-</ol> 
